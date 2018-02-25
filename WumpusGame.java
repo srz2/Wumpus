@@ -115,6 +115,28 @@ public class WumpusGame
 		System.out.println("You are currently in: " + room.getHallway() + " " + (room.getIndex() + 1) + " is has " + room.getRoomItem().toString());
 	}
 
+	private void showWumpus()
+	{
+		System.out.println("  ,/         \\.");
+		System.out.println(" ((           ))");
+		System.out.println("  \\`.       ,'/");
+		System.out.println("   )')     (`(");
+		System.out.println(" ,'`/       \\,`.");
+		System.out.println("(`-(         )-')");
+		System.out.println(" \\-'\\,-'\"`-./`-/");
+		System.out.println("  \\-')     (`-/\"");
+		System.out.println("  /`'       `'\"");
+		System.out.println(" (  _       _  )");
+		System.out.println(" | ( \\     / ) |");
+		System.out.println(" |  `.\\   /,'  |");
+		System.out.println(" |    `\\ /'    |");
+		System.out.println(" (             )");
+		System.out.println("  \\           /");
+		System.out.println("   \\         /");
+		System.out.println("    `.     ,'");
+		System.out.println("      `-.-'");
+	}
+
 	private void Splash()
 	{
 		System.out.println("");
