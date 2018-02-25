@@ -128,19 +128,34 @@ public class WumpusGame
 			System.out.print("Change Hallway(C); Go Left(L); Go Right(R):");
 			input = scan.next().toLowerCase();
 
+			int nextIndex = -1;
 			switch(input)
 			{
 				case "c":
-					int nextIndex = currentRoom.getIsInnerHallway() ? 0 : 10;
+					nextIndex = currentRoom.getIsInnerHallway() ? 0 : 10;
 					nextIndex += currentRoom.getIndex();
-					System.out.println("Changing to " + nextIndex);
+					// System.out.println("Changing to " + nextIndex);
 					assignNewRoom(nextIndex);
 					break;
 				case "l":
 					System.out.println("Lefting...");
+					nextIndex = currentRoom.getIndex() - 1;
+					if(nextIndex < 0)
+						nextIndex = 9;
+					if(currentRoom.getIsInnerHallway())
+						currentRoom = inner.get(nextIndex);
+					else
+						currentRoom = outter.get(nextIndex);
 					break;
 				case "r":
 					System.out.println("Righting...");
+					nextIndex = currentRoom.getIndex() + 1;
+					if(nextIndex > 9)
+						nextIndex = 0;
+					if(currentRoom.getIsInnerHallway())
+						currentRoom = inner.get(nextIndex);
+					else
+						currentRoom = outter.get(nextIndex);
 					break;
 				default:
 					System.out.println("Unknown");
