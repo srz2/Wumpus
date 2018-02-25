@@ -17,7 +17,11 @@ public class WumpusGame
 	int i_Pit = rand.nextInt(NUMROOMS * 2);
 	int i_Exit = rand.nextInt(NUMROOMS * 2);
 
-	Room currentRoom = null;
+	Room r_Current = null;
+	Room r_Wumpus = null;
+	Room r_Bats = null;
+	Room r_Pit = null;
+	Room r_Exit = null;
 
 	boolean IsGameOver = false;
 
@@ -25,22 +29,22 @@ public class WumpusGame
 	{
 		RoomItem item = RoomItem.None;
 
-		if(i_Wumpus % NUMROOMS == index)
+		if(i_Wumpus % (NUMROOMS * 2 ) == index)
 		{
 			item = RoomItem.Wumpus;
 		}
 
-		if(i_Bats % NUMROOMS == index)
+		if(i_Bats % (NUMROOMS * 2 ) == index)
 		{
 			item = RoomItem.Bats;
 		}
 
-		if(i_Pit % NUMROOMS == index)
+		if(i_Pit % (NUMROOMS * 2 ) == index)
 		{
 			item = RoomItem.Pit;
 		}
 
-		if(i_Exit % NUMROOMS == index)
+		if(i_Exit % (NUMROOMS * 2 ) == index)
 		{
 			item = RoomItem.Exit;
 		}
@@ -50,6 +54,11 @@ public class WumpusGame
 
 	public WumpusGame()
 	{
+		System.out.println(i_Wumpus);
+		System.out.println(i_Bats);
+		System.out.println(i_Pit);
+		System.out.println(i_Exit);
+
 		// Makes sure the exit and pit aren't in the same room
 		while(i_Exit == i_Pit)
 		{
@@ -64,13 +73,13 @@ public class WumpusGame
 			// Index 0 - 9 is outter room, 10-19 is inner room
 			if(c < 10)
 			{
-				System.out.println("Creating outter at " + c);
+				// System.out.println("Creating outter at " + c);
 				outter.add(new Room(c, item));
 				displayRoom(outter.get(c));
 			}
 			else
 			{
-				System.out.println("Creating inner at " + c);
+				// System.out.println("Creating inner at " + c);
 				inner.add(new Room(c, item));
 				displayRoom(inner.get(c -  10));
 			}
@@ -85,25 +94,25 @@ public class WumpusGame
 	private void assignNewRoom(int index)
 	{
 		// System.out.print("Current Room\n\t");
-		// if(currentRoom != null)
-		// 	displayRoom(currentRoom);
+		// if(r_Current != null)
+		// 	displayRoom(r_Current);
 		// else
 		// 	System.out.println("NULL");
 		if(index < 10)
 		{
-			currentRoom = outter.get(index);
+			r_Current = outter.get(index);
 		}
 		else
 		{
-			currentRoom = inner.get(index - 10);
+			r_Current = inner.get(index - 10);
 		}
 		// System.out.print("New Room - " + index + "\n\t");
-		// displayRoom(currentRoom);
+		// displayRoom(r_Current);
 	}
 
 	private void displayRoom(Room room)
 	{
-		System.out.println("You are currently in: " + room.getHallway() + " " + room.getIndex() + " is has " + room.getRoomItem().toString());
+		System.out.println("You are currently in: " + room.getHallway() + " " + (room.getIndex() + 1) + " is has " + room.getRoomItem().toString());
 	}
 
 	private void Splash()
@@ -123,7 +132,7 @@ public class WumpusGame
 		String input = "";
 		while(IsGameOver == false)
 		{
-			displayRoom(currentRoom);
+			displayRoom(r_Current);
 			System.out.println("What would you like to do?");
 			System.out.print("Change Hallway(C); Go Left(L); Go Right(R):");
 			input = scan.next().toLowerCase();
@@ -132,30 +141,30 @@ public class WumpusGame
 			switch(input)
 			{
 				case "c":
-					nextIndex = currentRoom.getIsInnerHallway() ? 0 : 10;
-					nextIndex += currentRoom.getIndex();
+					nextIndex = r_Current.getIsInnerHallway() ? 0 : 10;
+					nextIndex += r_Current.getIndex();
 					// System.out.println("Changing to " + nextIndex);
 					assignNewRoom(nextIndex);
 					break;
 				case "l":
-					System.out.println("Lefting...");
-					nextIndex = currentRoom.getIndex() - 1;
+					// System.out.println("Lefting...");
+					nextIndex = r_Current.getIndex() - 1;
 					if(nextIndex < 0)
 						nextIndex = 9;
-					if(currentRoom.getIsInnerHallway())
-						currentRoom = inner.get(nextIndex);
+					if(r_Current.getIsInnerHallway())
+						r_Current = inner.get(nextIndex);
 					else
-						currentRoom = outter.get(nextIndex);
+						r_Current = outter.get(nextIndex);
 					break;
 				case "r":
-					System.out.println("Righting...");
-					nextIndex = currentRoom.getIndex() + 1;
+					// System.out.println("Righting...");
+					nextIndex = r_Current.getIndex() + 1;
 					if(nextIndex > 9)
 						nextIndex = 0;
-					if(currentRoom.getIsInnerHallway())
-						currentRoom = inner.get(nextIndex);
+					if(r_Current.getIsInnerHallway())
+						r_Current = inner.get(nextIndex);
 					else
-						currentRoom = outter.get(nextIndex);
+						r_Current = outter.get(nextIndex);
 					break;
 				default:
 					System.out.println("Unknown");
