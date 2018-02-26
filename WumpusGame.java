@@ -12,12 +12,13 @@ public class WumpusGame
 
 	// The index for where each item is
 	Random rand = new Random();
-	int i_Wumpus = rand.nextInt(NUMROOMS * 2);
-	int i_Bats = rand.nextInt(NUMROOMS * 2);
-	int i_Pit = rand.nextInt(NUMROOMS * 2);
-	int i_Exit = rand.nextInt(NUMROOMS * 2);
+	int i_Wumpus = -1;
+	int i_Bats = -1;
+	int i_Pit = -1;
+	int i_Exit = -1;
 
 	Room r_Current = null;
+	Room r_Previous = null;
 	Room r_Wumpus = null;
 	Room r_Bats = null;
 	Room r_Pit = null;
@@ -25,72 +26,141 @@ public class WumpusGame
 
 	boolean IsGameOver = false;
 
-	private RoomItem getRoomItem(int index)
-	{
-		RoomItem item = RoomItem.None;
+	public boolean DisplayHelp = false;
 
-		if(i_Wumpus % (NUMROOMS * 2 ) == index)
-		{
-			item = RoomItem.Wumpus;
-		}
-
-		if(i_Bats % (NUMROOMS * 2 ) == index)
-		{
-			item = RoomItem.Bats;
-		}
-
-		if(i_Pit % (NUMROOMS * 2 ) == index)
-		{
-			item = RoomItem.Pit;
-		}
-
-		if(i_Exit % (NUMROOMS * 2 ) == index)
-		{
-			item = RoomItem.Exit;
-		}
-
-		return item;
-	}
-
+	/// Setup the game
 	public WumpusGame()
 	{
-		System.out.println(i_Wumpus);
-		System.out.println(i_Bats);
-		System.out.println(i_Pit);
-		System.out.println(i_Exit);
-
-		// Makes sure the exit and pit aren't in the same room
-		while(i_Exit == i_Pit)
+		// Generate random and unique indexes
+		ArrayList<Integer> itemIndexes = new ArrayList<Integer>();
+		for(int c = 0; c < 4; c++)
 		{
-			i_Exit = rand.nextInt(NUMROOMS * 2);
+			int value = -1;
+			do
+			{
+				value = rand.nextInt(NUMROOMS * 2);
+			}while(itemIndexes.contains(value));
+			itemIndexes.add(value);
 		}
+
+		// Report and assign indexes
+		// System.out.println("Generated " + itemIndexes.size() + " Indexes");
+		// System.out.println("Wumpus Index: " + itemIndexes.get(0));
+		// System.out.println("Exit Index: " + itemIndexes.get(1));
+		// System.out.println("Bats Index: " + itemIndexes.get(2));
+		// System.out.println("Pit Index: " + itemIndexes.get(3));
+
+		i_Wumpus = itemIndexes.get(0);
+		i_Exit = itemIndexes.get(1);
+		i_Bats = itemIndexes.get(2);
+		i_Pit = itemIndexes.get(3);
 
 		// Create rooms and place items inside
 		for(int c = 0; c < NUMROOMS * 2; c++)
 		{
-			RoomItem item = getRoomItem(c);
-			
-			// Index 0 - 9 is outter room, 10-19 is inner room
-			if(c < 10)
+			Room newRoom = null;
+			if(c == i_Wumpus)
 			{
-				// System.out.println("Creating outter at " + c);
-				outter.add(new Room(c, item));
-				displayRoom(outter.get(c));
+				newRoom = new Room(c, RoomItem.Wumpus);
+				r_Wumpus = newRoom;
+			}
+			else if(c == i_Exit)
+			{
+				newRoom = new Room(c, RoomItem.Exit);
+				r_Exit = newRoom;
+			}
+			else if(c == i_Pit)
+			{
+				newRoom = new Room(c, RoomItem.Pit);
+				r_Pit = newRoom;
+			}
+			else if(c == i_Bats)
+			{
+				newRoom = new Room(c, RoomItem.Bats);
+				r_Bats = newRoom;
 			}
 			else
 			{
+				newRoom = new Room(c, RoomItem.None);
+			}
+
+			// Assign room item variables
+			// if(item == RoomItem.Wumpus)
+			// {
+			// 	// System.out.println("Assigned Wumpus");
+			// 	r_Wumpus = newRoom;
+			// }
+			// else if(item == RoomItem.Pit)
+			// {
+			// 	// System.out.println("Assigned Pit");
+			// 	r_Pit = newRoom;
+			// }
+			// else if(item == RoomItem.Bats)
+			// {
+			// 	// System.out.println("Assigned Bats");
+			// 	r_Bats = newRoom;
+			// }
+			// else if(item == RoomItem.Exit)
+			// {
+			// 	// System.out.println("Assigned Exit");
+			// 	r_Exit = newRoom;
+			// }
+
+			// Index 0 - 9 is outter room, 10-19 is inner room
+			if(c < 10)
+			{
+				outter.add(newRoom);
+				// System.out.println("Creating outter at " + c);				
+				// displayRoom(outter.get(c));
+			}
+			else
+			{
+				inner.add(newRoom);
 				// System.out.println("Creating inner at " + c);
-				inner.add(new Room(c, item));
-				displayRoom(inner.get(c -  10));
+				// displayRoom(inner.get(c -  10));
 			}
 		}
 
-		// Randomly get a starting room
-		int value = rand.nextInt(NUMROOMS * 2);
+		// Randomly get an EMPTY starting room
+		int value = - 1;
+		do
+		{
+			value = rand.nextInt(NUMROOMS * 2);
+		}while(value == r_Wumpus.getIndex() || value == r_Exit.getIndex() || value == r_Pit.getIndex() || value == r_Bats.getIndex());
 		// System.out.println("Randomly selected room: " + value);
 		assignNewRoom(value);
 	}
 
+	/// Generate a room item based on the index
+	/// I dont like this function
+	// private RoomItem generateRoomItem(int index)
+	// {
+	// 	RoomItem item = RoomItem.None;
+
+	// 	if(i_Wumpus % (NUMROOMS * 2 ) == index)
+	// 	{
+	// 		item = RoomItem.Wumpus;
+	// 	}
+
+	// 	if(i_Bats % (NUMROOMS * 2 ) == index)
+	// 	{
+	// 		item = RoomItem.Bats;
+	// 	}
+
+	// 	if(i_Pit % (NUMROOMS * 2 ) == index)
+	// 	{
+	// 		item = RoomItem.Pit;
+	// 	}
+
+	// 	if(i_Exit % (NUMROOMS * 2 ) == index)
+	// 	{
+	// 		item = RoomItem.Exit;
+	// 	}
+
+	// 	return item;
+	// }
+
+	/// Assign a new room based on the index 0-9 is outter hallways, 10-19 is inner hallways
 	private void assignNewRoom(int index)
 	{
 		// System.out.print("Current Room\n\t");
@@ -110,11 +180,20 @@ public class WumpusGame
 		// displayRoom(r_Current);
 	}
 
+	// Display the room you are in and the item inside
 	private void displayRoom(Room room)
 	{
-		System.out.println("You are currently in: " + room.getHallway() + " " + (room.getIndex() + 1) + " is has " + room.getRoomItem().toString());
+		if(room.getRoomItem() != RoomItem.None)
+		{
+			System.out.println("You are currently in: " + room.getHallway() + " " + (room.getIndex() + 1) + " is has " + room.getRoomItem().toString());
+		}
+		else
+		{
+			System.out.println("You are currently in: " + room.getHallway() + " " + (room.getIndex() + 1));
+		}
 	}
 
+	/// Show the Wumpus with a gameover message
 	private void showWumpus()
 	{
 		System.out.println("  ,/         \\.");
@@ -135,8 +214,12 @@ public class WumpusGame
 		System.out.println("   \\         /");
 		System.out.println("    `.     ,'");
 		System.out.println("      `-.-'");
+		System.out.println("****Oh no what is that?!****");
+		System.out.println("You have been devoured by the Wumpus");
+		System.out.println("Game Over.");
 	}
 
+	/// Print out the splash screen
 	private void Splash()
 	{
 		System.out.println("");
@@ -145,19 +228,29 @@ public class WumpusGame
 		System.out.println("");
 		System.out.println("You have been placed inside a cavern. You must find your way to the exit!");
 		System.out.println("Do it quickly, before something...finds you...");
+		System.out.println("");
+		System.out.println("");
 	}
 
 	public void play()
 	{
 		Splash();
 
+		IsGameOver = analyizeRooms();
+
 		String input = "";
 		while(IsGameOver == false)
 		{
+			if(DisplayHelp)
+			{
+				displayHallways();
+			}
+
 			displayRoom(r_Current);
-			System.out.println("What would you like to do?");
+			r_Previous = r_Current;
 			System.out.print("Change Hallway(C); Go Left(L); Go Right(R):");
 			input = scan.next().toLowerCase();
+			System.out.println("");
 
 			int nextIndex = -1;
 			switch(input)
@@ -189,16 +282,108 @@ public class WumpusGame
 						r_Current = outter.get(nextIndex);
 					break;
 				default:
-					System.out.println("Unknown");
+					// System.out.println("Unknown");
 					break;
 			}
+			IsGameOver = analyizeRooms();
 		}
 		System.out.println();
 	}
 
+	// Display all hallways (used for DisplayHelp attribute)
+	private void displayHallways()
+	{
+		System.out.print("Outter Hallway: ");
+		for(int c = 0; c < outter.size(); c++)
+		{
+			System.out.print("-" + outter.get(c).getRoomItem().toString());
+		}
+		System.out.println("");
+
+		System.out.print("Inner Hallway:  ");
+		for(int c = 0; c < inner.size(); c++)
+		{
+			System.out.print("-" + inner.get(c).getRoomItem().toString());
+		}
+		System.out.println("");
+	}
+
+	/// See if the current room is the same room as any of the special rooms
+	private boolean analyizeRooms()
+	{
+		//Are we met with the wumpus
+		if(r_Current.compareTo(r_Wumpus) == 0)
+		{
+			showWumpus();
+			return true;
+		}
+
+		// Are we at the exit
+		if(r_Current.compareTo(r_Exit) == 0)
+		{
+			// Gameover
+			System.out.println("You made it out alive! Woohoo!");
+			return true;
+		}
+
+		// Are we in a room with bats
+		if(r_Current.compareTo(r_Bats) == 0)
+		{
+			//Go to previous remove
+			System.out.println("Eeeeeek! There are bats here, go back to the previous room");
+			r_Current = r_Previous;
+		}
+
+		// Are we falling into a pit?
+		if(r_Current.compareTo(r_Pit) == 0)
+		{
+			System.out.println("****Ahhhhhhhhhh!****");
+			System.out.println("You fell into a pit...");
+			System.out.println("Game Over.");
+			return true;
+		}
+
+		// Check surrounding areas
+		checkSurroundings(r_Wumpus, "*sniff* *sniff*, I smell something funny...");
+		checkSurroundings(r_Exit, "I feel...a breeze!!!");
+
+		return false;
+	}
+
+	/// Check the surrounding rooms for a particular room. Display a message if adjacent
+	private void checkSurroundings(Room r, String message)
+	{
+		if(r_Current.getIndex() == r.getIndex() &&  r_Current.getIsInnerHallway() != r.getIsInnerHallway())
+		{
+			// If we are in the same index but different hallways as wumpus
+			System.out.println(message);
+		}
+		else if(r_Current.getIsInnerHallway() == r.getIsInnerHallway() && (r_Current.getIndex() + 1 == r.getIndex() || 
+																				  r_Current.getIndex() - 1 == r.getIndex()))
+		{
+			// If we are in the same hallway and adjacent to the wumpus
+			System.out.println(message);
+		}
+		else
+		{
+			// Do nothing
+		}
+	}
+
+	/// Main program function
 	public static void main(String[] args)
 	{
-		WumpusGame game = new WumpusGame();	
+		WumpusGame game = new WumpusGame();
+
+		// Parse arguments
+		if(args.length == 1)
+		{
+			if(args[0].toLowerCase().equals("help"))
+			{
+				game.DisplayHelp = true;
+			}
+		}
+
 		game.play();
 	}
 }

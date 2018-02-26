@@ -1,4 +1,4 @@
-public class Room
+public class Room implements Comparable<Room>
 {
 	public boolean isInner = false;
 	public int hallwayIndex = -1;
@@ -34,5 +34,18 @@ public class Room
 	public RoomItem getRoomItem()
 	{
 		return item;
+	}
+
+	@Override
+	public int compareTo(Room otherRoom)
+	{
+		if(this.isInner == otherRoom.isInner && this.hallwayIndex == otherRoom.hallwayIndex)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 }
