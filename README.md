@@ -60,7 +60,9 @@ Since I no longer had my teacher as a resource, I took some assumtions/changes o
 
 Have a java compiler and all you need to do is in a commandline `javac *.java` in the folder and to run the program `java WumpusGame`.
 
-I've added support for two arguments. Doing `java WumpusGame hard` will enable hard mode where the wumpus and bats will move each time you do. Doing `java WumpusGame help` will toggle on the map of the cavern. You can combine the two into a call `java WumpusGame hard help` which will enable both features 
+I've added support for two arguments. Doing `java WumpusGame hard` will enable hard mode where the wumpus and bats will move each time you do. Doing `java WumpusGame help` will toggle on the map of the cavern. You can combine the two into a call `java WumpusGame hard help` which will enable both features
+
+I have also included build and run scripts.
 
 ## Closing
 
