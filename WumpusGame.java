@@ -189,7 +189,7 @@ public class WumpusGame
 
 			displayRoom(r_Current);
 			r_Previous = r_Current;
-			System.out.print("Change Hallway(C); Go Left(L); Go Right(R):");
+			System.out.print("Change Hallway(C); Go Left(L); Go Right(R); Help(H):");
 			input = scan.next().toLowerCase();
 			System.out.println("");
 
@@ -224,6 +224,7 @@ public class WumpusGame
 					break;
 				case "h":
 					DisplayHelp = !DisplayHelp;
+					break;
 				default:
 					// System.out.println("Unknown");
 					break;
