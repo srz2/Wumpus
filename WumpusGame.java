@@ -231,10 +231,21 @@ public class WumpusGame
 	// Display all hallways (used for DisplayHelp attribute)
 	private void displayHallways()
 	{
+		int n_CurrentIndex = r_Current.getIndex();
+
 		System.out.print("Outter Hallway: ");
 		for(int c = 0; c < outter.size(); c++)
 		{
 			System.out.print("-" + outter.get(c).getRoomItem().toString());
+			
+			// Puts indicator of current position
+			if(c == n_CurrentIndex)
+			{
+				if(r_Current.getIsInnerHallway() == false)
+				{
+					System.out.print("(*)");
+				}
+			}
 		}
 		System.out.println("");
 
@@ -242,6 +253,15 @@ public class WumpusGame
 		for(int c = 0; c < inner.size(); c++)
 		{
 			System.out.print("-" + inner.get(c).getRoomItem().toString());
+
+			// Puts indicator of current position
+			if(c == n_CurrentIndex)
+			{
+				if(r_Current.getIsInnerHallway() == true)
+				{
+					System.out.print("(*)");
+				}
+			}
 		}
 		System.out.println("");
 	}
