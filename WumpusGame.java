@@ -4,6 +4,7 @@ import java.util.Scanner;
 public class WumpusGame
 {
 	public int NUMROOMS = 10;
+	public int NUMSPECIALROOMS = 4;
 
 	Scanner scan = new Scanner(System.in);
 	
@@ -34,7 +35,7 @@ public class WumpusGame
 	{
 		// Generate random and unique indexes for special rooms
 		ArrayList<Integer> itemIndexes = new ArrayList<Integer>();
-		for(int c = 0; c < 4; c++)
+		for(int c = 0; c < NUMSPECIALROOMS; c++)
 		{
 			int value = -1;
 			do
@@ -78,6 +79,8 @@ public class WumpusGame
 				newRoom = new Room(c, RoomItem.None);
 			}
 
+			// Index 0 - (NUMROOMS - 1) is outter room, NUMROOMS-(NUMROOMS * 2 - 1) is inner room
+			if(c < NUMROOMS)
 			{
 				outter.add(newRoom);
 				// System.out.println("Creating outter at " + c);				
@@ -103,12 +106,13 @@ public class WumpusGame
 	/// Assign a new room based on the index 0-9 is outter hallways, 10-19 is inner hallways
 	private void assignNewRoom(int index)
 	{
+		if(index < NUMROOMS)
 		{
 			r_Current = outter.get(index);
 		}
 		else
 		{
-			r_Current = inner.get(index - 10);
+			r_Current = inner.get(index - NUMROOMS);
 		}
 	}
 
@@ -188,7 +192,7 @@ public class WumpusGame
 			switch(input)
 			{
 				case "c":
-					nextIndex = r_Current.getIsInnerHallway() ? 0 : 10;
+					nextIndex = r_Current.getIsInnerHallway() ? 0 : NUMROOMS;
 					nextIndex += r_Current.getIndex();
 					// System.out.println("Changing to " + nextIndex);
 					assignNewRoom(nextIndex);
@@ -197,7 +201,7 @@ public class WumpusGame
 					// System.out.println("Lefting...");
 					nextIndex = r_Current.getIndex() - 1;
 					if(nextIndex < 0)
-						nextIndex = 9;
+						nextIndex = NUMROOMS - 1;
 					if(r_Current.getIsInnerHallway())
 						r_Current = inner.get(nextIndex);
 					else
@@ -206,7 +210,7 @@ public class WumpusGame
 				case "r":
 					// System.out.println("Righting...");
 					nextIndex = r_Current.getIndex() + 1;
-					if(nextIndex > 9)
+					if(nextIndex > NUMROOMS - 1)
 						nextIndex = 0;
 					if(r_Current.getIsInnerHallway())
 						r_Current = inner.get(nextIndex);
