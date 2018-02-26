@@ -213,6 +213,8 @@ public class WumpusGame
 					else
 						r_Current = outter.get(nextIndex);
 					break;
+				case "h":
+					DisplayHelp = !DisplayHelp;
 				default:
 					// System.out.println("Unknown");
 					break;
