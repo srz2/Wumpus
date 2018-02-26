@@ -17,6 +17,7 @@ public class WumpusGame
 	int i_Pit = -1;
 	int i_Exit = -1;
 
+	// Reference to each room
 	Room r_Current = null;
 	Room r_Previous = null;
 	Room r_Wumpus = null;
@@ -31,7 +32,7 @@ public class WumpusGame
 	/// Setup the game
 	public WumpusGame()
 	{
-		// Generate random and unique indexes
+		// Generate random and unique indexes for special rooms
 		ArrayList<Integer> itemIndexes = new ArrayList<Integer>();
 		for(int c = 0; c < 4; c++)
 		{
@@ -42,13 +43,6 @@ public class WumpusGame
 			}while(itemIndexes.contains(value));
 			itemIndexes.add(value);
 		}
-
-		// Report and assign indexes
-		// System.out.println("Generated " + itemIndexes.size() + " Indexes");
-		// System.out.println("Wumpus Index: " + itemIndexes.get(0));
-		// System.out.println("Exit Index: " + itemIndexes.get(1));
-		// System.out.println("Bats Index: " + itemIndexes.get(2));
-		// System.out.println("Pit Index: " + itemIndexes.get(3));
 
 		i_Wumpus = itemIndexes.get(0);
 		i_Exit = itemIndexes.get(1);
@@ -84,30 +78,6 @@ public class WumpusGame
 				newRoom = new Room(c, RoomItem.None);
 			}
 
-			// Assign room item variables
-			// if(item == RoomItem.Wumpus)
-			// {
-			// 	// System.out.println("Assigned Wumpus");
-			// 	r_Wumpus = newRoom;
-			// }
-			// else if(item == RoomItem.Pit)
-			// {
-			// 	// System.out.println("Assigned Pit");
-			// 	r_Pit = newRoom;
-			// }
-			// else if(item == RoomItem.Bats)
-			// {
-			// 	// System.out.println("Assigned Bats");
-			// 	r_Bats = newRoom;
-			// }
-			// else if(item == RoomItem.Exit)
-			// {
-			// 	// System.out.println("Assigned Exit");
-			// 	r_Exit = newRoom;
-			// }
-
-			// Index 0 - 9 is outter room, 10-19 is inner room
-			if(c < 10)
 			{
 				outter.add(newRoom);
 				// System.out.println("Creating outter at " + c);				
@@ -127,48 +97,12 @@ public class WumpusGame
 		{
 			value = rand.nextInt(NUMROOMS * 2);
 		}while(value == r_Wumpus.getIndex() || value == r_Exit.getIndex() || value == r_Pit.getIndex() || value == r_Bats.getIndex());
-		// System.out.println("Randomly selected room: " + value);
 		assignNewRoom(value);
 	}
-
-	/// Generate a room item based on the index
-	/// I dont like this function
-	// private RoomItem generateRoomItem(int index)
-	// {
-	// 	RoomItem item = RoomItem.None;
-
-	// 	if(i_Wumpus % (NUMROOMS * 2 ) == index)
-	// 	{
-	// 		item = RoomItem.Wumpus;
-	// 	}
-
-	// 	if(i_Bats % (NUMROOMS * 2 ) == index)
-	// 	{
-	// 		item = RoomItem.Bats;
-	// 	}
-
-	// 	if(i_Pit % (NUMROOMS * 2 ) == index)
-	// 	{
-	// 		item = RoomItem.Pit;
-	// 	}
-
-	// 	if(i_Exit % (NUMROOMS * 2 ) == index)
-	// 	{
-	// 		item = RoomItem.Exit;
-	// 	}
-
-	// 	return item;
-	// }
 
 	/// Assign a new room based on the index 0-9 is outter hallways, 10-19 is inner hallways
 	private void assignNewRoom(int index)
 	{
-		// System.out.print("Current Room\n\t");
-		// if(r_Current != null)
-		// 	displayRoom(r_Current);
-		// else
-		// 	System.out.println("NULL");
-		if(index < 10)
 		{
 			r_Current = outter.get(index);
 		}
@@ -176,8 +110,6 @@ public class WumpusGame
 		{
 			r_Current = inner.get(index - 10);
 		}
-		// System.out.print("New Room - " + index + "\n\t");
-		// displayRoom(r_Current);
 	}
 
 	// Display the room you are in and the item inside
