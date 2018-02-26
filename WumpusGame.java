@@ -434,11 +434,25 @@ public class WumpusGame
 		WumpusGame game = new WumpusGame();
 
 		// Parse arguments
-		if(args.length == 1)
+		if(args.length >= 1)
 		{
-			if(args[0].toLowerCase().equals("help"))
+			for(int c = 0; c < args.length; c++)
 			{
-				game.DisplayHelp = true;
+				String argument = args[c].toLowerCase();
+				if(argument.equals("help"))
+				{
+					System.out.println("Enabling Help");
+					game.DisplayHelp = true;
+				}
+				else if(argument.equals("hard"))
+				{
+					System.out.println("Enabling HardMode");
+					game.HardMode = true;
+				}
+				else
+				{
+					System.out.println("Ignoring Unknown Argument: \"" + argument + "\"");
+				}
 			}
 		}
 
