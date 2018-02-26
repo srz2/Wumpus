@@ -31,6 +31,11 @@ public class Room implements Comparable<Room>
 		return isInner;
 	}
 
+	public void setRoomItem(RoomItem newItem)
+	{
+		item = newItem;
+	}
+
 	public RoomItem getRoomItem()
 	{
 		return item;

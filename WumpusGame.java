@@ -29,6 +29,7 @@ public class WumpusGame
 	boolean IsGameOver = false;
 
 	public boolean DisplayHelp = false;
+	public boolean HardMode = false;
 
 	/// Setup the game
 	public WumpusGame()
@@ -223,9 +224,104 @@ public class WumpusGame
 					// System.out.println("Unknown");
 					break;
 			}
-			IsGameOver = analyizeRooms();
+
+			if(HardMode == true)
+			{
+				// Move the Wumpus and Bats
+				int wumpusMovement = getNextRandomMovement();
+				moveCreature(r_Wumpus, wumpusMovement);
+
+				int batMovement = getNextRandomMovement();
+				moveCreature(r_Bats, wumpusMovement);
+			}
 		}
 		System.out.println();
+	}
+
+	// Change the rooms and keep track of the instance variables after the change
+	private void changeRoom(Room r_Creature, Room r_NextRoom)
+	{
+		RoomItem item = r_Creature.getRoomItem();
+		r_NextRoom.setRoomItem(item);
+		r_Creature.setRoomItem(RoomItem.None);
+
+		if(item == RoomItem.Wumpus)
+		{
+			r_Wumpus = r_NextRoom;
+		}
+		else if(item == RoomItem.Bats)
+		{
+			r_Bats = r_NextRoom;
+		}
+	}
+
+	// Handle the logic for moving a creature
+	private void moveCreature(Room r_target, int movement)
+	{
+		RoomItem item = r_target.getRoomItem();
+
+		if(movement == 0) // Change hallway
+		{
+			Room desiredNext = null;
+			if(r_target.getIsInnerHallway())
+			{
+				desiredNext = outter.get(r_target.getIndex());
+			}
+			else
+			{
+				desiredNext = inner.get(r_target.getIndex());
+			}
+
+			if(desiredNext.getRoomItem() == RoomItem.None)
+			{
+				// Change items
+				changeRoom(r_target, desiredNext);
+			}
+			return;
+		}
+
+		ArrayList<Room> hallway = r_target.getIsInnerHallway() ? inner : outter;
+		if(movement == -1) // Go left
+		{
+			int index = r_target.getIndex();
+			if(index == 0)
+			{
+				index = NUMROOMS - 1;
+			}
+			Room desiredNext = hallway.get(index);
+			if(desiredNext.getRoomItem() == RoomItem.None)
+			{
+				changeRoom(r_target, desiredNext);
+			}
+		}
+		else if(movement == 1) // Go right
+		{
+			int index = r_target.getIndex();
+			if(index == NUMROOMS - 1)
+			{
+				index = 0;
+			}
+			Room desiredNext = hallway.get(index);
+			if(desiredNext.getRoomItem() == RoomItem.None)
+			{
+				changeRoom(r_target, desiredNext);
+			}
+		}
+		else
+		{
+			System.out.println("This shouldn't happen. Unknown movement: " + movement);
+		}
+	}
+
+	// Generate a random movement for a creature. Zero is to change hallways, -1 is left, 1 is right
+	private int getNextRandomMovement()
+	{
+		// Get number between 0 and 1
+		int CreatureNextIndex = rand.nextInt(2);
+		// Determine if its positive or negative
+		boolean isPositive = rand.nextBoolean();
+		// Return the result
+		return isPositive ? CreatureNextIndex : CreatureNextIndex * -1;
 	}
 
 	// Display all hallways (used for DisplayHelp attribute)
