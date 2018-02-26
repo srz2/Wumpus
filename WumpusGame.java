@@ -173,14 +173,18 @@ public class WumpusGame
 	{
 		Splash();
 
-		IsGameOver = analyizeRooms();
-
 		String input = "";
 		while(IsGameOver == false)
 		{
 			if(DisplayHelp)
 			{
 				displayHallways();
+			}
+
+			IsGameOver = analyizeRooms();
+			if(IsGameOver == true)
+			{
+				break;
 			}
 
 			displayRoom(r_Current);
